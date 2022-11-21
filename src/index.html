@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+</head>
+
+<body>
+    <button onclick="subscribe()">Subscribe</button>
+    <button id="click">Click</button>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io()
+        async function subscribe() {
+            let sw = await navigator.serviceWorker.ready;
+            let push = await sw.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey:
+                    'BLEhkBvOZS6EytHNgRBPd3xF4k6iVzCQrjDOJHYPmsK_bQCL7r4homz5E2BPaLkDXPOJv5QdT5cvnT8E4lS5MI8'
+            });
+            console.log(JSON.stringify(push));
+            socket.emit('key', JSON.stringify(push))
+        }
+
+        if ('serviceWorker' in navigator) {
+            addEventListener('load', async () => {
+                let sw = await navigator.serviceWorker.register('/sw.js');
+                console.log(sw);
+            });
+        }
+
+        const btn = document.querySelector('#click')
+        btn.onclick = () => {
+            socket.emit('click')
+        }
+    </script>
+
+</body>
+
+</html>
